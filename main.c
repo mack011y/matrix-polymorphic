@@ -4,115 +4,113 @@
 typedef struct {
     int rows;
     int cols;
-    double** data;
+    size_t sizeOfElement;
+    void*** data;
 } Matrix;
 
-Matrix* create_matrix(int rows, int cols) {
+typedef void (*MultiplyFunction)(void* a, void* b, void* result);
+typedef void (*MultiplyOnScalarFunction)(void* a, double scalar, void* result);
+typedef void (*PrintFunction)(void* element);
+
+Matrix* create_matrix(const int rows, const int cols, const size_t sizeOfElement) {
     Matrix* mat = malloc(sizeof(Matrix));
     mat->rows = rows;
     mat->cols = cols;
-    mat->data = (double**)malloc(rows * sizeof(double*));
+    mat->sizeOfElement = sizeOfElement;
+    mat->data = (void***)malloc(rows * sizeof(void**));
     for (int i = 0; i < rows; i++) {
-        mat->data[i] = (double*)malloc(cols * sizeof(double));
+        mat->data[i] = (void**)malloc(cols * sizeof(void*));
+        for (int j = 0; j < cols; j++) {
+            mat->data[i][j] = malloc(sizeOfElement);
+        }
     }
     return mat;
 }
 
 void free_matrix(Matrix* mat) {
+    if (mat == NULL) return;
     for (int i = 0; i < mat->rows; i++) {
+        for (int j = 0; j < mat->cols; j++) {
+            free(mat->data[i][j]);
+        }
         free(mat->data[i]);
     }
     free(mat->data);
     free(mat);
 }
 
-Matrix* add_matrices(Matrix* a, Matrix* b) {
+Matrix* add_matrices(const Matrix* a, const Matrix* b, const MultiplyFunction sunFunc) {
     if (a->rows != b->rows || a->cols != b->cols) return NULL;
-    Matrix* result = create_matrix(a->rows, a->cols);
+    Matrix* result = create_matrix(a->rows, a->cols, a->sizeOfElement);
     for (int i = 0; i < a->rows; i++) {
         for (int j = 0; j < a->cols; j++) {
-            result->data[i][j] = a->data[i][j] + b->data[i][j];
+            sunFunc(a->data[i][j], b->data[i][j], result->data[i][j]);
         }
     }
     return result;
 }
 
-Matrix* multiply_matrices(Matrix* a, Matrix* b) {
+Matrix* multiply_matrices(const Matrix* a, const Matrix* b, const MultiplyFunction mulFunc, const MultiplyFunction sumFunc) {
     if (a->cols != b->rows) return NULL;
-    Matrix* result = create_matrix(a->rows, b->cols);
+    Matrix* result = create_matrix(a->rows, b->cols, a->sizeOfElement);
     for (int i = 0; i < a->rows; i++) {
         for (int j = 0; j < b->cols; j++) {
-            result->data[i][j] = 0;
             for (int k = 0; k < a->cols; k++) {
-                result->data[i][j] += a->data[i][k] * b->data[k][j];
+                void* tmp = malloc(a->sizeOfElement);
+                mulFunc(a->data[i][k], b->data[k][j], tmp);
+                sumFunc(result->data[i][j], tmp, result->data[i][j]);
             }
         }
     }
     return result;
 }
 
-void multiply_matrix_by_scalar(const Matrix* mat, const double scalar) {
+void multiply_matrix_by_scalar(const Matrix* mat, const double scalar, const MultiplyOnScalarFunction mulFunc) {
     for (int i = 0; i < mat->rows; i++) {
         for (int j = 0; j < mat->cols; j++) {
-            mat->data[i][j] *= scalar;
+            mulFunc(mat->data[i][j], scalar, mat->data[i][j]);
         }
     }
 }
 
-void add_linear_combination(Matrix* mat, int rowIndex, double* alphas) {
-    if (rowIndex < 0 || rowIndex >= mat->rows) return;
+void add_linear_combination(const Matrix* mat, const int rowIndex, const double* alphas, const MultiplyFunction sumFunc, const MultiplyOnScalarFunction mulScalarFunc) {
+    if (rowIndex < 0 || rowIndex >= mat->rows) return; // out of range
     for (int i = 0; i < mat->rows; i++) {
-        if (i != rowIndex) {
-            for (int j = 0; j < mat->cols; j++) {
-                mat->data[rowIndex][j] += alphas[i] * mat->data[i][j];
-            }
+        if (i == rowIndex) continue;
+        for (int j = 0; j < mat->cols; j++) {
+            void* tmp = malloc(mat->sizeOfElement);
+            mulScalarFunc(mat->data[i][j], alphas[i], tmp);
+            sumFunc(mat->data[rowIndex][j], tmp, mat->data[rowIndex][j]);
+            free(tmp);
         }
     }
 }
 
-void print_matrix(Matrix* mat) {
+void print_matrix(const Matrix* mat, const PrintFunction printFunc) {
     for (int i = 0; i < mat->rows; i++) {
         for (int j = 0; j < mat->cols; j++) {
-            printf("%lf ", mat->data[i][j]);
+            printFunc(mat->data[i][j]);
         }
         printf("\n");
     }
 }
 
+void print_double(void* element) {
+    printf("%lf ", *(double*)element);
+}
+
+void sum_double(void* a, void* b, void* result) {
+    *(double*)result = *(double*)a + *(double*)b;
+}
+
+void multiply_double(void* a, void* b, void* result) {
+    *(double*)result = *(double*)a * *(double*)b;
+}
+
+void multiply_double_by_scalar(void* a, const double scalar, void* result) {
+    *(double*)result = *(double*)a * scalar;
+}
+
 int main() {
-    Matrix* m1 = create_matrix(2, 2);
-    Matrix* m2 = create_matrix(2, 2);
-
-    m1->data[0][0] = 1.0; m1->data[0][1] = 2.0;
-    m1->data[1][0] = 3.0; m1->data[1][1] = 4.0;
-
-    m2->data[0][0] = 5.0; m2->data[0][1] = 6.0;
-    m2->data[1][0] = 7.0; m2->data[1][1] = 8.0;
-
-    Matrix* sum = add_matrices(m1, m2);
-    if (sum) {
-        printf("Sum:\n");
-        print_matrix(sum);
-        free_matrix(sum);
-    }
-
-    Matrix* product = multiply_matrices(m1, m2);
-    if (product) {
-        printf("Product:\n");
-        print_matrix(product);
-        free_matrix(product);
-    }
-
-    multiply_matrix_by_scalar(m1, 2.0);
-    printf("Matrix m1 after scalar multiplication:\n");
-    print_matrix(m1);
-
-    double alphas[] = {1.0, -0.5};
-    add_linear_combination(m1, 0, alphas);
-    printf("Matrix m1 after adding linear combination:\n");
-    print_matrix(m1);
-
-    free_matrix(m1);
-    free_matrix(m2);
     return 0;
 }
