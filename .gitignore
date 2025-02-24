@@ -1,0 +1,9 @@
+*.idea/
+*cmake-build-debug/
+*CMakeLists.txt
+*a.out
+*matrix.o
+*main.o
+*test
+*typeInfo.o
+*doubleType.o
