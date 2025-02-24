@@ -1,7 +1,6 @@
 #ifndef DOUBLE_H
 #define DOUBLE_H
 
-#include <stddef.h>
 #include "typeInfo.h"
 
 void sum_double(void* a, void* b, void* result);

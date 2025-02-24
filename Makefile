@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c11
 
 # Исходные файлы и объектные файлы
-SRC = main.c matrix.c typeInfo.c doubleType.c
+SRC = main.c matrix.c types/Double.c types/Int.c types/Complex.c
 OBJ = $(SRC:.c=.o)
 
 # Финальный исполняемый файл

@@ -2,7 +2,9 @@
 #define TYPES_ENUM_H
 
 typedef enum {
-    DOUBLE_TYPE
+    DOUBLE_TYPE,
+    INT_TYPE,
+    COMPLEX_TYPE,
 } DataType;
 
 #endif

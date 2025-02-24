@@ -1,6 +1,8 @@
 #include "matrix.h"
 #include "types/typeInfo.h"
 #include "types/Double.h"
+#include "types/Int.h"
+#include "types/Complex.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +19,12 @@ Matrix* create_matrix(int rows, int cols, const DataType type) {
     switch (type) {
         case DOUBLE_TYPE:
             mat->type = &doubleType;
+        break;
+        case INT_TYPE:
+            mat->type = &intType;
+        break;
+        case COMPLEX_TYPE:
+            mat->type = &complexType;
         break;
         default:
             printf("Unsupported type\n");

@@ -6,4 +6,6 @@
 *main.o
 *test
 *typeInfo.o
-*doubleType.o
+*Double.o
+*Complex.o
+*Int.o
