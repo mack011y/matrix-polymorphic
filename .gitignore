@@ -9,3 +9,8 @@
 *Double.o
 *Complex.o
 *Int.o
+*test_runner
+*matrix_program
+*tests/checkAllTests.o
+*tests/test_matrix.o
+*tests/test_types.o
