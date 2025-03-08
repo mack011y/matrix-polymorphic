@@ -1,20 +1,26 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11
 
-# Исходные файлы и объектные файлы
-SRC = main.c matrix.c types/Double.c types/Int.c types/Complex.c
+SRC = src/main.c src/matrix.c src/types/Double.c src/types/Int.c src/types/Complex.c
 OBJ = $(SRC:.c=.o)
 
-# Финальный исполняемый файл
-TARGET = test
+TEST_SRC = tests/checkAllTests.c tests/test_matrix.c tests/test_types.c src/matrix.c src/types/Double.c src/types/Int.c src/types/Complex.c
+TEST_OBJ = $(TEST_SRC:.c=.o)
 
-all: $(TARGET)
+TARGET = matrix_program
+TEST_TARGET = test
 
-$(TARGET): $(OBJ)
+test: $(TEST_OBJ)
+	$(CC) $(TEST_OBJ) -o $(TEST_TARGET)
+	./$(TEST_TARGET)
+	$(MAKE) all
+	./$(TARGET)
+
+all: $(OBJ)
 	$(CC) $(OBJ) -o $(TARGET)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJ) $(TARGET) $(TEST_TARGET) $(TEST_OBJ)
