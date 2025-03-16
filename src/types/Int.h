@@ -21,4 +21,6 @@ typedef struct {
 
 extern typeInfo intType;
 
+typeInfo* getIntType();
+
 #endif

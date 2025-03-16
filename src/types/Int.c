@@ -64,3 +64,7 @@ typeInfo intType = {
     .negate = negate_int,
     .type = INT_TYPE
 };
+
+typeInfo* getIntType() {
+    return &intType;
+}

@@ -55,10 +55,16 @@ typeInfo doubleType = {
     .multiply = multiply_double,
     .multiply_scalar = multiply_by_scalar_double,
     .print = print_double,
+    .printFile = printFile_double,
     .return_neutral_of_sum = return_neutral_of_sum_double,
     .is_zero = is_zero_double,
     .divide = divide_double,
     .negate = negate_double,
     .scan = scan_double,
+    .scanFile = scanFile_double,
     .type = DOUBLE_TYPE
 };
+
+typeInfo* getDoubleType() {
+  return &doubleType;
+}

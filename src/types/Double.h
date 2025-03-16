@@ -21,4 +21,6 @@ typedef struct {
 
 extern typeInfo doubleType;
 
+typeInfo* getDoubleType();
+
 #endif

@@ -6,7 +6,7 @@
 
 
 int test_create_matrix() {
-    Matrix* mat = create_matrix(3, 3, INT_TYPE);
+    Matrix* mat = create_matrix(3, 3, getIntType());
     if (mat == NULL) {
         printf("[WA]     create_matrix()\n");
         return 1;
@@ -21,7 +21,7 @@ int test_create_matrix() {
 }
 
 int test_set_element() {
-    Matrix* mat = create_matrix(3, 3, INT_TYPE);
+    Matrix* mat = create_matrix(3, 3, getIntType());
     int value = 10;
     set_element(mat, 1, 1, &value, mat->type->type);
     int* retrieved_value = (int*)get_element(mat, 1, 1);
@@ -37,7 +37,7 @@ int test_set_element() {
 }
 
 int test_get_element() {
-    Matrix* mat = create_matrix(3, 3, INT_TYPE);
+    Matrix* mat = create_matrix(3, 3, getIntType());
     int value = 20;
     set_element(mat, 0, 0, &value, mat->type->type);
     int* retrieved_value = (int*)get_element(mat, 0, 0);
@@ -53,8 +53,8 @@ int test_get_element() {
 }
 
 int test_add_matrices() {
-    Matrix* mat1 = create_matrix(2, 2, INT_TYPE);
-    Matrix* mat2 = create_matrix(2, 2, INT_TYPE);
+    Matrix* mat1 = create_matrix(2, 2, getIntType());
+    Matrix* mat2 = create_matrix(2, 2, getIntType());
     int value1 = 5, value2 = 3;
     set_element(mat1, 0, 0, &value1, mat1->type->type);
     set_element(mat2, 0, 0, &value2, mat2->type->type);
@@ -74,8 +74,8 @@ int test_add_matrices() {
 }
 
 int test_multiply_matrices() {
-    Matrix* mat1 = create_matrix(2, 2, INT_TYPE);
-    Matrix* mat2 = create_matrix(2, 2, INT_TYPE);
+    Matrix* mat1 = create_matrix(2, 2, getIntType());
+    Matrix* mat2 = create_matrix(2, 2, getIntType());
     int value1 = 2, value2 = 3;
     set_element(mat1, 0, 0, &value1, mat1->type->type);
     set_element(mat2, 0, 0, &value2, mat2->type->type);
@@ -95,7 +95,7 @@ int test_multiply_matrices() {
 }
 
 int test_transpose_matrix() {
-    Matrix* mat = create_matrix(2, 2, INT_TYPE);
+    Matrix* mat = create_matrix(2, 2, getIntType());
     int value = 1;
     set_element(mat, 0, 1, &value, mat->type->type);
     Matrix* transposed = transpose_matrix(mat);
@@ -113,7 +113,7 @@ int test_transpose_matrix() {
 }
 
 int test_linear_combination() {
-    Matrix* mat = create_matrix(3, 3, INT_TYPE);
+    Matrix* mat = create_matrix(3, 3, getIntType());
     int values[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {

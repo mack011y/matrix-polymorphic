@@ -1,26 +1,29 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11
+CFLAGS = -Wall -Wextra -std=c99
+LDFLAGS = -lm
 
-SRC = src/main.c src/matrix.c src/types/Double.c src/types/Int.c src/types/Complex.c
-OBJ = $(SRC:.c=.o)
+SRC_DIR = src
+OBJ_DIR = obj
+BIN_DIR = bin
 
-TEST_SRC = tests/checkAllTests.c tests/test_matrix.c tests/test_types.c src/matrix.c src/types/Double.c src/types/Int.c src/types/Complex.c
-TEST_OBJ = $(TEST_SRC:.c=.o)
-
+SRCS = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/types/*.c)
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 TARGET = matrix_program
-TEST_TARGET = test
 
-test: $(TEST_OBJ)
-	$(CC) $(TEST_OBJ) -o $(TEST_TARGET)
-	./$(TEST_TARGET)
-	$(MAKE) all
-	./$(TARGET)
+.PHONY: all clean
 
-all: $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET)
+all: $(TARGET)
 
-%.o: %.c
+$(TARGET): $(OBJS)
+	@mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) $(TARGET) $(TEST_TARGET) $(TEST_OBJ)
+	rm -rf $(OBJ_DIR) $(TARGET)
+
+test: $(TARGET)
+	./test_runner

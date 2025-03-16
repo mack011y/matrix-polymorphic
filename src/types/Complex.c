@@ -38,6 +38,12 @@ void print_complex(const void* element) {
     printf("(%lf + %lfi) ", c->real, c->imaginary);
 }
 
+
+void printFile_complex(const void* element, FILE* file) {
+    Complex* c = (Complex*)element;
+    printf("(%lf + %lfi) ", c->real, c->imaginary);
+}
+
 void return_neutral_of_sum_complex(const void* value) {
     Complex* c = (Complex*)value;
     c->real = 0.0;
@@ -86,3 +92,7 @@ typeInfo complexType = {
     .negate = negate_complex,
     .type = COMPLEX_TYPE
 };
+
+typeInfo* getComplexType() {
+    return &complexType;
+}

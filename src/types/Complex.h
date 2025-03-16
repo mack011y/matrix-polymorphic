@@ -22,4 +22,6 @@ typedef struct {
 
 extern typeInfo complexType;
 
+typeInfo* getComplexType();
+
 #endif
